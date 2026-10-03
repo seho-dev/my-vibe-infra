@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/seho-dev/vibe-infra/main/schema.json",
+  "role": "provider",
+  "infrastructures": {
+    "base": {
+      "url": "https://github.com/seho-dev/vibe-infra",
+      "version": "latest"
+    }
+  },
+  "includes": [
+    "skills/**/*.md",
+    "commands/**/*.md",
+    "prompts/**/*.md"
+  ]
+}

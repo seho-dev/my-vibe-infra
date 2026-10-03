@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/seho-dev/vibe-infra/main/lockfile.schema.json",
+  "updatedAt": "2026-10-03T11:03:06Z",
+  "infrastructures": {
+    "base": {
+      "url": "https://github.com/seho-dev/vibe-infra",
+      "version": "v1.2.1",
+      "resolvedCommit": "d20785b1c29b781a948c8b0f03185ab2544910b6"
+    }
+  }
+}
