@@ -1,6 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/seho-dev/vibe-infra/main/schema.json",
   "role": "provider",
+  "name": "seho-vibe-infra",
   "infrastructures": {
     "base": {
       "url": "https://github.com/seho-dev/vibe-infra",
