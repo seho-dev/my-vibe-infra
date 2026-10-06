@@ -145,18 +145,20 @@ AI 引擎将自动执行：
 
 ### 方式二：通过自然语言引导 AI 助手接入
 
-在 Claude Code、OpenCode 或其他支持的 Agent 工具中发送以下提示词：
+在 Claude Code、OpenCode 或其他支持的 Agent 工具中发送以下提示词（**内置 Base Infra 依赖自愈检测**，即使在未接入基线的新项目中也能一键自动补全全部基础设施）：
 
 ```markdown
 请按照 vibe-infra 规范，将 https://github.com/seho-dev/my-vibe-infra 作为基础设施依赖引入到当前工程中：
 
-1. 校验 https://github.com/seho-dev/my-vibe-infra 根目录是否存在合法的 vibe.json 清单。
-2. 解析其最新的稳定 Git Tag。
-3. 摄取该 Tag 对应的 README.md 建立认知背景（仅作上下文记忆，不得落盘写入项目）。
-4. 对引入的 commands/、skills/、prompts/ 进行供应链安全审计。
-5. 扁平化语义融合到当前工程对应的 AI 工具原生配置目录下。
-6. 在根目录 vibe.json 的 infrastructures 中注册该依赖（version: "latest"），并在 vibe.lock 记录锁定的 tag 和 commit SHA。
-7. 输出接入结果报告。
+1. 【前置 Base Infra 依赖自愈】：
+   检查当前工程是否已接入底层 Base Infra（判断根目录 vibe.json 中 infrastructures 是否包含 base，或 AI 原生目录是否存在 vibe-sync 等生命周期指令）。
+   - 若未接入 Base Infra：请优先访问 https://github.com/seho-dev/vibe-infra，解析其最新稳定 Git Tag，阅读 Tag README 建立认知，将其核心指令（commands/vibe-add.md、vibe-sync.md、vibe-remove.md）与公理（prompts/shared-concepts.md）安装到当前工程的 AI 工具原生配置目录下，并在根目录创建/更新 vibe.json（role: "consumer"，base 声明为 version: "latest"）及 vibe.lock。
+2. 【解析目标 Infra】：校验 https://github.com/seho-dev/my-vibe-infra 根目录是否存在合法的 vibe.json 清单，解析其最新的稳定 Git Tag。
+3. 【认知背景注入】：摄取该 Tag 对应的 README.md 建立认知背景（仅作上下文记忆，不得落盘写入项目）。
+4. 【供应链安全审计】：对引入的 commands/、skills/、prompts/ 进行供应链安全审计。
+5. 【扁平化语义融合】：将工程技能（skills/）、业务指令（commands/）与规范模板（prompts/）扁平化语义融合到当前工程对应的 AI 工具原生配置目录下。
+6. 【依赖清单与版本锁定】：在根目录 vibe.json 的 infrastructures 中注册当前依赖（"seho-vibe-infra"，version: "latest"），并在 vibe.lock 记录锁定的 tag 和 commit SHA。
+7. 【结果输出】：输出完整的接入结果报告（包含已补齐的 Base 指令与已注入的工程能力）。
 ```
 
 ### 方式三：声明式清单配置（`vibe.json`）
@@ -172,7 +174,7 @@ AI 引擎将自动执行：
       "url": "https://github.com/seho-dev/vibe-infra",
       "version": "latest"
     },
-    "my-infra": {
+    "seho-vibe-infra": {
       "url": "https://github.com/seho-dev/my-vibe-infra",
       "version": "latest"
     }

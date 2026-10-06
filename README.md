@@ -144,18 +144,20 @@ This will automatically:
 
 ### Method 2: AI Agent Prompt Onboarding
 
-Send the following prompt to Claude Code or your agentic assistant:
+Send the following prompt to Claude Code or your agentic assistant (**includes automatic Base Infra self-healing check**, automatically bootstrapping full lifecycle protocols even in fresh projects):
 
 ```markdown
 Please add https://github.com/seho-dev/my-vibe-infra as an infrastructure dependency following the vibe-infra specification:
 
-1. Verify that https://github.com/seho-dev/my-vibe-infra contains a valid root vibe.json manifest.
-2. Resolve the latest stable Git Tag from https://github.com/seho-dev/my-vibe-infra.
-3. Read its tagged README.md into working context for cognitive grounding (do not copy to disk).
-4. Conduct a pre-merge supply chain security audit on incoming commands, skills, and prompts.
-5. Adapt and synthesize matching assets into this workspace's native harness directories.
-6. Register the dependency under `infrastructures` in root `vibe.json` (version: "latest") and record the resolved commit and tag in `vibe.lock`.
-7. Output a summary report of imported skills, commands, and agents.
+1. [Prerequisite Base Infra Self-Healing]:
+   Check if the current workspace already has Base Infra installed (e.g. check if `base` exists under `infrastructures` in root `vibe.json`, or if `vibe-sync` exists in the native harness directory).
+   - If Base Infra is missing: Prioritize fetching https://github.com/seho-dev/vibe-infra, resolve its latest stable Git Tag, read its tagged README into working context, install its core lifecycle commands (`commands/vibe-add.md`, `vibe-sync.md`, `vibe-remove.md`) and core axioms (`prompts/shared-concepts.md`) into this workspace's native harness directories, and initialize/update root `vibe.json` (role: "consumer", with `base: latest`) and `vibe.lock`.
+2. [Verify & Resolve Target Infra]: Verify that https://github.com/seho-dev/my-vibe-infra contains a valid root vibe.json manifest, and resolve its latest stable Git Tag.
+3. [Cognitive Grounding]: Read its tagged README.md into working context for cognitive grounding (do not copy to disk).
+4. [Supply Chain Security Audit]: Conduct a pre-merge supply chain security audit on incoming commands, skills, and prompts.
+5. [Flat Semantic Fusion]: Adapt and synthesize matching assets (`skills/`, `commands/`, `prompts/`) into this workspace's native harness directories.
+6. [Manifest Registration & Lock]: Register the dependency under `infrastructures` in root `vibe.json` ("seho-vibe-infra", version: "latest") and record the resolved commit and tag in `vibe.lock`.
+7. [Execution Summary]: Output a comprehensive execution summary reporting both base lifecycle commands and imported domain capabilities.
 ```
 
 ### Method 3: Declarative Configuration (`vibe.json`)
@@ -171,7 +173,7 @@ Declare the dependency in your consumer project's `vibe.json`:
       "url": "https://github.com/seho-dev/vibe-infra",
       "version": "latest"
     },
-    "my-infra": {
+    "seho-vibe-infra": {
       "url": "https://github.com/seho-dev/my-vibe-infra",
       "version": "latest"
     }
