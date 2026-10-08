@@ -159,6 +159,7 @@ AI 引擎将自动执行：
 5. 【扁平化语义融合】：将工程技能（skills/）、业务指令（commands/）与规范模板（prompts/）扁平化语义融合到当前工程对应的 AI 工具原生配置目录下。
 6. 【依赖清单与版本锁定】：在根目录 vibe.json 的 infrastructures 中注册当前依赖（"seho-vibe-infra"，version: "latest"），并在 vibe.lock 记录锁定的 tag 和 commit SHA。
 7. 【结果输出】：输出完整的接入结果报告（包含已补齐的 Base 指令与已注入的工程能力）。
+8. 【推荐外部工具引导】：检查宿主环境是否已安装 `codegraph` 工具（可通过终端 `which codegraph` 探测）。若未就绪，在执行报告的“推荐后续步骤”中提示开发者：建议运行 `npm install -g @colbymchenry/codegraph && codegraph install -y` 并在工程根目录执行 `codegraph init`，以解锁 AST 级别的跨文件调用拓扑分析与精准代码检索能力。
 ```
 
 ### 方式三：声明式清单配置（`vibe.json`）
@@ -186,6 +187,19 @@ AI 引擎将自动执行：
 
 ---
 
+### 推荐外挂代码检索工具（`codegraph`）
+
+为配合本套基建中的高精度代码评审（`/code-review`）、重构防线（`skills/refactor`）与全局架构分析，推荐为当前工程或全局安装并配置 **`codegraph`** 代码知识图谱与精确检索工具：
+
+| 维度 | 说明 | 对应命令 / 配置 |
+| :--- | :--- | :--- |
+| **工具定位** | 专为代码库设计的代码知识图谱与精确符号检索工具，提供 AST 级跨文件调用链（`callers` / `callees`）、变更影响面分析（`impact`）及任务上下文构建。 | 官方包：`@colbymchenry/codegraph` |
+| **全局安装** | 安装 CLI 二进制命令行工具 | `npm install -g @colbymchenry/codegraph`<br/>（或 `pnpm add -g @colbymchenry/codegraph`） |
+| **工程初始化** | 在下游业务工程根目录生成图谱索引 | `codegraph init` |
+| **宿主 MCP 接入** | 一键自动注册为 AI 宿主（Claude Code、Cursor、OpenCode、Codex CLI 等）的 MCP 工具 | `codegraph install -y` |
+
+---
+
 ## 提供者维护与开发
 
 作为规范提供者仓库（`role: "provider"`），本项目直接在根目录维护各模块资产。
@@ -200,9 +214,9 @@ AI 引擎将自动执行：
 
 Agent 会自动时序遍历中间版本的 Release Notes 与 Changelog，进行供应链安全审查，并将更新融合至根目录资产，同时保障本仓库的本地定制内容不受破坏。
 
-### 自动化发布流程
+### 自动化发版流程
 
-仓库配置了基于 GitHub Actions 的 [semantic-release](https://github.com/semantic-release/semantic-release) 自动发版流程（见 `.github/workflows/release.yml`）。当合并包含符合 Conventional Commits 规范（`feat:`, `fix:`, `perf:` 等）的提交至 `main` 分支时，将自动分析版本号、生成 Release Notes 并打上对应的 Git Tag。
+仓库配置了基于 GitHub Actions 的 [semantic-release](https://github.com/semantic-release/semantic-release) 自动化发版流程（见 `.github/workflows/release.yml`）。当合并包含符合 Conventional Commits 规范（`feat:`, `fix:`, `perf:` 等）的提交至 `main` 分支时，将自动分析版本号、生成 Release Notes 并打上对应的 Git Tag。
 
 ---
 

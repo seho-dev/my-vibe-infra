@@ -6,6 +6,7 @@
 
 [![Base Infrastructure](https://img.shields.io/badge/vibe--infra-base-blue)](https://github.com/seho-dev/vibe-infra)
 [![Role](https://img.shields.io/badge/role-provider-orange)](#)
+[![Release](https://github.com/seho-dev/my-vibe-infra/actions/workflows/release.yml/badge.svg)](https://github.com/seho-dev/my-vibe-infra/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
@@ -140,7 +141,7 @@ This will automatically:
 1. Conduct a supply-chain security audit.
 2. Ingest this repository's tagged `README.md` for cognitive grounding.
 3. Perform flat semantic fusion into your host harness directory (e.g. `.claude/` or `.opencode/`).
-4. Update your local `vibe.json` and lock the resolved tag in `vibe.lock`.
+4. Update your local `vibe.json` and lock the resolved tag in `vibe.lock` rationale.
 
 ### Method 2: AI Agent Prompt Onboarding
 
@@ -158,6 +159,7 @@ Please add https://github.com/seho-dev/my-vibe-infra as an infrastructure depend
 5. [Flat Semantic Fusion]: Adapt and synthesize matching assets (`skills/`, `commands/`, `prompts/`) into this workspace's native harness directories.
 6. [Manifest Registration & Lock]: Register the dependency under `infrastructures` in root `vibe.json` ("seho-vibe-infra", version: "latest") and record the resolved commit and tag in `vibe.lock`.
 7. [Execution Summary]: Output a comprehensive execution summary reporting both base lifecycle commands and imported domain capabilities.
+8. [Recommended External Tooling]: Check if `codegraph` is available in the host environment (e.g. `which codegraph`). If missing, advise the developer in the report's Next Steps: install via `npm install -g @colbymchenry/codegraph && codegraph install -y` and initialize with `codegraph init` to unlock AST-level cross-file call graph and symbol search capabilities.
 ```
 
 ### Method 3: Declarative Configuration (`vibe.json`)
@@ -182,6 +184,19 @@ Declare the dependency in your consumer project's `vibe.json`:
 ```
 
 Then trigger synchronization via `/vibe-sync`.
+
+---
+
+### Recommended Code Search & Graph Tooling (`codegraph`)
+
+To unlock AST-level call graph topology and symbol navigation during architecture analysis, refactoring (`skills/refactor`), and strict code reviews (`/code-review`), we recommend configuring **`codegraph`**:
+
+| Scope | Description | Command / Config |
+| :--- | :--- | :--- |
+| **Tool Overview** | Code intelligence and knowledge graph for codebases. Provides cross-file call chains (`callers` / `callees`), impact analysis (`impact`), and task-oriented context building. | Package: `@colbymchenry/codegraph` |
+| **Global Install** | Install the CLI binary | `npm install -g @colbymchenry/codegraph`<br/>(or `pnpm add -g @colbymchenry/codegraph`) |
+| **Project Init** | Initialize codebase graph index at the consumer project root | `codegraph init` |
+| **MCP Integration** | Automatically registers MCP server with supported agents (Claude Code, Cursor, OpenCode, Codex CLI, etc.) | `codegraph install -y` |
 
 ---
 
