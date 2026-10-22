@@ -11,6 +11,7 @@
   "includes": [
     "skills/**/*.md",
     "commands/**/*.md",
-    "prompts/**/*.md"
+    "prompts/**/*.md",
+    "agents/**/*.md"
   ]
 }
