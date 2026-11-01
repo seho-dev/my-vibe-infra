@@ -2,26 +2,26 @@
 
 ## Core Principles
 
-- **Separation of Presentation & Domain Logic**: Components focus on rendering and user interaction; business calculation, async orchestration, and state transitions belong in dedicated hooks, composables, or domain service functions.
-- **Explicit Lifecycle & Cleanup**: Side effects that establish listeners, timers, or ongoing network requests must be safely cleaned up on unmount or dependency change.
-- **Predictable Async States**: Asynchronous workflows must handle pending, fulfilled, and rejected outcomes explicitly.
+- **Separation of Presentation & Domain Logic**: Separate complex domain policy and async orchestration from rendering when they form a coherent responsibility. Simple calculations, state updates, and local handlers can remain in components; a dedicated hook or service is not required for every operation.
+- **Explicit Lifecycle & Cleanup**: Side effects that establish listeners, timers, or ongoing network requests must be safely cleaned up on unmount or dependency change. Cancel obsolete work or ignore stale completions where these changes can race.
+- **Predictable Async States**: Workflow owners represent relevant pending, fulfilled, and rejected outcomes explicitly. Lower-level helpers may return values or promises without their own state wrappers.
 
 ## MUST
 
 | Rule | Description |
 | ---- | ----------- |
-| Separation of concerns | Complex business calculations and multi-step data transformations live outside UI components |
+| Separation of concerns | Give complex domain policy, transformations, and orchestration a clear responsibility boundary; keep simple local handlers in the component |
 | Effect cleanup | Clean up subscriptions, DOM event listeners, intervals, and pending network requests on teardown |
-| Error boundaries | Async functions must handle errors gracefully without unhandled promise rejections |
+| Async error ownership | The designated owner recovers, translates, or reports failures so they remain observable; other layers propagate errors, without mandatory catches at every async layer or unhandled rejections |
 | No stale closures | Effect and callback dependencies must remain accurate and synchronized |
 
 ## SHOULD
 
 | Rule | Description |
 | ---- | ----------- |
-| Reusable logic abstraction | Abstract cross-cutting or shared logic into standard composables/hooks matching framework idioms |
+| Justified logic extraction | Extract for domain meaning, cognitive clarity, actual reuse, or a responsibility/effect boundary; use hooks/composables when framework lifecycle or reactive state calls for them |
 | Abortable requests | Pass `AbortSignal` to async requests when ongoing work should be canceled on re-trigger or unmount |
-| Return explicit states | Logic units handling async operations should expose state (`data`, `isLoading`, `error`) and actions |
+| Return explicit states | Workflow owners expose state (`data`, `isLoading`, `error`) and actions when consumers need them; lower-level helpers can return values or promises |
 
 ---
 
@@ -29,8 +29,10 @@
 
 ### 1. Presentation & Logic Separation
 
+Here, `useUserMetrics` owns the request lifecycle, cancellation, and error state; simple local handlers do not need a hook.
+
 ```tsx
-// ❌ Bad: Bloating the UI component with business calculations and async logic
+// ❌ Bad: Unobserved request failures and domain scoring policy mixed into rendering
 function UserStatusWidget({ userId }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -42,7 +44,7 @@ function UserStatusWidget({ userId }) {
       .then((res) => res.json())
       .then((res) => {
         if (!active) return;
-        // Complex domain scoring calculation mixed in view layer
+        // Domain scoring policy embedded in the view layer
         const score = res.points * 1.5 + (res.tier === 'VIP' ? 100 : 0);
         setData({ ...res, score });
       })
@@ -54,11 +56,12 @@ function UserStatusWidget({ userId }) {
   return <div>Score: {data?.score}</div>;
 }
 
-// ✅ Good: Domain logic extracted into a reusable hook or utility function
+// ✅ Good: Domain policy and request lifecycle have a clear owner
 function UserStatusWidget({ userId }) {
-  const { data, isLoading } = useUserMetrics(userId);
+  const { data, isLoading, error } = useUserMetrics(userId);
 
   if (isLoading) return <div>Loading...</div>;
+  if (error) return <div role="alert">Unable to load metrics.</div>;
   return <div>Score: {data?.score}</div>;
 }
 ```
@@ -73,7 +76,7 @@ useEffect(() => {
   // Missing cleanup listener and missing abort signal
 }, [id]);
 
-// ✅ Good: Clean up listeners and cancel pending requests
+// ✅ Good: This effect owns cleanup and failure reporting; fetchData propagates errors
 useEffect(() => {
   const controller = new AbortController();
 
@@ -81,9 +84,11 @@ useEffect(() => {
   window.addEventListener('resize', handleResize);
 
   fetchData(id, { signal: controller.signal })
-    .then((result) => setData(result))
+    .then((result) => {
+      if (!controller.signal.aborted) setData(result);
+    })
     .catch((error) => {
-      if (error.name !== 'AbortError') {
+      if (!controller.signal.aborted) {
         showErrorMessage(error);
       }
     });

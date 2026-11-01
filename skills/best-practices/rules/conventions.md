@@ -4,7 +4,7 @@
 
 - **Feature & Domain Boundary**: Organize codebase by business features or architectural layers. Directories express domain ownership; files express specific artifacts.
 - **Decoupled API Layer**: Keep HTTP client configuration, endpoint contracts, and request functions outside UI components in a designated API/service layer.
-- **Centralized Constants & Enums**: Extract magic numbers, business status codes, and configuration keys into dedicated constants modules with `SCREAMING_SNAKE_CASE`.
+- **Named Domain Constants & Enums**: Name non-obvious domain values near their owner using `SCREAMING_SNAKE_CASE`. Use a shared constants module only for actual shared ownership; small clear literals and local expressions can stay inline.
 - **Path Aliases over Deep Traversal**: Use configured module path aliases (e.g. `@/`) for cross-domain imports. Never write fragile relative paths (`../../../../`).
 
 ## MUST
@@ -14,7 +14,7 @@
 | Path aliases | Cross-domain and deep imports must use the project's configured alias (e.g. `@/components/`, `@/utils/`) |
 | No deep relative imports | Prohibit relative traversal deeper than parent directory (`../` is okay for siblings; `../../..` is banned) |
 | Decoupled API calls | UI components must not call raw HTTP libraries (`axios.get`, `fetch`) inline; import from an API/service module |
-| No magic strings/numbers | Business statuses and fixed domain values must be imported from constants |
+| Named domain values | Give non-obvious business statuses and fixed domain values meaningful names near their owner; do not extract every literal into a standalone constants module |
 | File naming consistency | Components use `PascalCase`; logic/hooks and utilities use `camelCase`; styles and configs use `kebab-case` |
 
 ## SHOULD
@@ -23,7 +23,7 @@
 | ---- | ----------- |
 | Directory naming | Directories use `kebab-case` (e.g. `order-detail/`, `user-profile/`) |
 | Structured import order | 3rd-party dependencies → internal alias modules → local relative modules → style files |
-| File size budget | Keep files focused (< 300 lines normal; > 500 lines strongly indicates a need to refactor) |
+| File size diagnostic | Use size as a prompt to inspect cohesion, not a quota; split by coherent responsibility only when it improves understanding or ownership |
 
 ---
 
@@ -57,7 +57,9 @@ export async function getUserProfile(userId: string): Promise<UserProfile> {
 import { getUserProfile } from '@/api/user';
 
 function UserCard({ userId }: { userId: string }) {
-  const { data: user } = useQuery(['user', userId], () => getUserProfile(userId));
+  const { data: user, isLoading, error } = useQuery(['user', userId], () => getUserProfile(userId));
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div role="alert">Unable to load profile.</div>;
   return <div>{user?.name}</div>;
 }
 ```
@@ -76,7 +78,7 @@ import { formatDate } from '@/utils/date';
 import { USER_ROLES } from '@/constants/roles';
 ```
 
-### 3. Centralized Constants vs Hardcoded Literals
+### 3. Named Domain Constants vs Unexplained Literals
 
 ```ts
 // ❌ Bad: Hardcoded string literals and magic numbers scattered in code
@@ -84,20 +86,20 @@ if (user.role === 'admin' && status === 2) {
   expireInDays = 30;
 }
 
-// ✅ Good: Typed constants imported from domain constants module
-export const USER_ROLES = {
+// ✅ Good: Name domain values near their owner; share a module only for shared ownership
+const USER_ROLES = {
   ADMIN: 'admin',
   MEMBER: 'member',
   GUEST: 'guest',
 } as const;
 
-export const ORDER_STATUS = {
+const ORDER_STATUS = {
   PENDING: 1,
   ACTIVE: 2,
   EXPIRED: 3,
 } as const;
 
-export const DEFAULT_SESSION_EXPIRATION_DAYS = 30;
+const DEFAULT_SESSION_EXPIRATION_DAYS = 30;
 
 // Call site:
 if (user.role === USER_ROLES.ADMIN && status === ORDER_STATUS.ACTIVE) {

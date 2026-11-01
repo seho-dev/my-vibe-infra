@@ -23,7 +23,7 @@
 | ---- | ----------- |
 | Semantic prop ordering | Group props: identity/data → state/flags → event callbacks (`onXxx` last) |
 | Early returns | Return early for loading, empty, and error states before primary render |
-| Pure helper extraction | Stateless rendering helpers without closure dependencies should live outside the component |
+| Justified helper extraction | Extract for domain meaning, cognitive clarity, actual reuse, or a responsibility/effect boundary. Only after extraction is justified does the absence of closure dependencies favor placement outside the component |
 
 ---
 
@@ -73,7 +73,7 @@ function ItemList({ items }) {
   return <ul>{activeItems.map((item) => <li key={item.id}>{item.name}</li>)}</ul>;
 }
 
-// ✅ Good: Derive directly in render (memoize only if computation is heavy)
+// ✅ Good: Derive directly in render (memoize only when workload or profiling justifies it)
 function ItemList({ items }) {
   const activeItems = items.filter((item) => item.isActive);
 
