@@ -1,6 +1,6 @@
 # My Vibe Infra
 
-> **Curated AI Infrastructure Provider for Frontend Engineering, Code Quality, Documentation, and Testing**
+> **Curated AI Infrastructure Provider for Programming Practices, Code Quality, Documentation, and Testing**
 >
 > [中文文档](README.zh-CN.md) | **English Documentation**
 
@@ -18,7 +18,7 @@
 ```mermaid
 flowchart TD
     subgraph Provider ["My Vibe Infra (Provider)"]
-        Skills["Skills<br/>• best-practices<br/>• refactor"]
+        Skills["Skills<br/>• best-practices (Programming Baseline)<br/>• refactor"]
         Commands["Commands<br/>• /code-review<br/>• /change-report<br/>• /session-insights<br/>• /gen-agents-md"]
         Agents["Specialized Agents<br/>• doc (Tech Writing)<br/>• test (Contract Testing)"]
         Prompts["Prompts & Templates<br/>• Scaffolds, Checklists<br/>• Mock Boundaries"]
@@ -48,7 +48,7 @@ Skills provide deep contextual guardrails loaded dynamically during coding, rest
 
 | Skill | Description | Key Modules & Rules |
 | :--- | :--- | :--- |
-| **`best-practices`** | Frontend architecture and code quality standards. Mandatory baseline before writing code. | • **Coding Basics & Style**: Mandatory normalization, defensive fallbacks, early returns.<br/>• **Component & Logic**: Separation of UI presentation and business logic.<br/>• **State & Performance**: Minimal state models, avoiding unnecessary re-renders.<br/>• **Checklists**: Ready-to-use review and component checklists. |
+| **`best-practices`** | Language-independent programming and code quality baseline, with scoped frontend rules. | • **Justified Complexity**: Add defenses and abstractions for actual requirements, contracts, or credible failure modes—not hypothetical robustness.<br/>• **Trust Boundaries**: Validate external input at the relevant boundary; honor established internal contracts without repeated checks or silent fallback on invalid data.<br/>• **Direct Logic & Error Ownership**: Extract for real clarity or responsibility; handle errors where recovery, translation, or reporting belongs.<br/>• **Frontend Extensions**: Apply component, state, CSS, and performance rules only where relevant. |
 | **`refactor`** | Guardrails for safe structural refactoring, migrations, and seam restructuring. | • **Behavior Lock**: Lock behavior with regression tests before moving code.<br/>• **Policy vs. Runtime**: Keep configuration declarative; avoid runtime capability leaks.<br/>• **Declarative Over Imperative**: Prefer top-down data flow; avoid speculative abstractions.<br/>• **Delete Before Toggle**: Eliminate dead paths instead of masking them behind feature flags. |
 
 ---
@@ -119,7 +119,7 @@ my-vibe-infra/
 │   ├── agents/                     # Test & doc templates and checklists
 │   └── commands/                   # Command prompt references
 ├── skills/                         # Domain knowledge skills
-│   ├── best-practices/             # Frontend coding standards and examples
+│   ├── best-practices/             # General programming baseline and frontend extensions
 │   └── refactor/                   # Structural refactoring guardrails
 ├── vibe.json                       # Provider manifest declaring exported assets
 └── vibe.lock                       # Semantic lockfile tracking upstream base

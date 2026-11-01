@@ -1,63 +1,52 @@
 ---
 name: best-practices
-description: Frontend coding standards and architecture guardrails. Load when designing, writing, refactoring, or reviewing frontend components, business logic, state, styling, or engineering conventions.
+description: Language-independent coding standards and architecture guardrails. Load when designing, writing, refactoring, or reviewing code in any language. Includes scoped frontend extensions for components, logic, state, styling, performance, and conventions.
 ---
 
-# Frontend Best Practices
+# Code Best Practices
 
-Universal architecture and code quality standards for frontend engineering.
+Apply the general baseline to code in any language or runtime. Load frontend extensions only when the task involves the corresponding frontend concerns.
 
-> `MUST` rules describe foundational baselines. When working in an established codebase, existing project conventions take precedence over illustrative directory aliases or naming examples.
-
----
+> `MUST` rules describe correctness and safety baselines. Follow the language's idioms and existing project conventions; illustrative syntax, names, and layouts do not prescribe architecture for other stacks.
 
 ## Core Invariants
 
-1. **Single Source of Truth**: State has one clear owner. Downstream components read values or emit events; they must never mirror parent state into local state just to sync via effects.
-2. **Boundary Isolation**: Strict separation between UI presentation, business calculation, and network API layers.
-3. **Zero Speculative Abstraction**: Express directly first. Never introduce thin wrapper functions or premature abstraction layers without genuine domain meaning.
-4. **Defensive at Boundaries**: Normalize untrusted or raw shapes once at the ingestion boundary. Use single-hop fallbacks; eliminate cascading guessing chains.
+1. **Justified Complexity**: Add machinery only for a requirement, contract, or credible failure mode; never remove required safety to simplify code.
+2. **Reliable Boundaries**: Validate external input at each relevant trust boundary, then rely on established internal guarantees. New invariants need checks; types and casts alone do not validate runtime data.
+3. **Honest Contracts**: Normalize agreed representations and default only permitted absence. Never disguise invalid mandatory data or failed work as success or empty results.
+4. **Direct Code First**: Prefer existing code, standard libraries, platform features, and installed dependencies. Extract for domain meaning, cognitive simplicity, reuse, or responsibility boundaries, not line/caller counts or testability alone.
+5. **Capable Error Ownership**: Recover, add useful context, or report at the responsible boundary; otherwise propagate idiomatic errors/results/exceptions. Resource cleanup is mandatory.
+6. **Single Source of Truth**: Give data and policy clear owners; derive dependent values instead of synchronizing redundant copies. Do not impose frontend layers on other stacks.
 
----
+## General Review Checklist
 
-## Scenario Rules
+Self-check after designing, writing, refactoring, or reviewing code:
 
-| Scenario | Rules File | Core Focus |
+- [ ] New machinery has a concrete trigger, evidence, consequence, and insufficient existing protection; probabilities were not invented.
+- [ ] Meaningful speculative additions or unresolved contract choices were raised with the user; ordinary safety did not await permission.
+- [ ] Malformed external data and failed work cannot pass as valid results; normalization and defaults follow explicit contracts.
+- [ ] A reader can trace data/policy ownership, side effects, and error handling without redundant layers or repeated internal validation.
+- [ ] Security, permissions, data integrity, resource lifetimes, and reachable races remain protected.
+
+## Language-Independent Baseline
+
+Apply [rules/defensive.md](rules/defensive.md) for evidence-based simplicity, boundary contracts, abstraction decisions, defaults, and error ownership in every language.
+
+## Frontend Extensions (Load Only When Applicable)
+
+These files extend the baseline for frontend work. Do not apply their component, store, CSS, browser, import-alias, or directory-layout prescriptions to unrelated languages or runtimes.
+
+| Frontend Concern | Rules File | Core Focus |
 | :--- | :--- | :--- |
-| **Component** | [rules/component.md](rules/component.md) | Unidirectional data flow, prop destructuring, derived state, imperative handle boundaries |
-| **Logic** | [rules/logic.md](rules/logic.md) | Presentation vs domain decoupling, effect teardown & cancellation, async lifecycle |
-| **State** | [rules/state.md](rules/state.md) | State minimization, avoiding prop drilling, immutable updates, single store ownership |
-| **Defensive & Style** | [rules/defensive.md](rules/defensive.md) | Zero speculative wrappers, normalization at boundary, safe single-hop fallbacks (`??`) |
-| **CSS & Styling** | [rules/css.md](rules/css.md) | Scoped component styles, design tokens / CSS variables, dynamic inline style limits |
-| **Performance** | [rules/performance.md](rules/performance.md) | Route & heavy component code-splitting, memoized computations, list virtualization |
-| **Conventions** | [rules/conventions.md](rules/conventions.md) | Feature-based directory layout, path aliases, centralized constants, decoupled API layer |
+| **Component** | [rules/component.md](rules/component.md) | Unidirectional data flow, derived state, behavioral handles |
+| **Logic** | [rules/logic.md](rules/logic.md) | Presentation/domain boundaries, effect cleanup, async lifecycle |
+| **State** | [rules/state.md](rules/state.md) | Minimal state, composition, explicit ownership and updates |
+| **CSS & Styling** | [rules/css.md](rules/css.md) | Scoped styles, design tokens, dynamic inline styles |
+| **Performance** | [rules/performance.md](rules/performance.md) | Frontend loading, rendering, memoization, virtualization |
+| **Conventions** | [rules/conventions.md](rules/conventions.md) | Frontend project structure, imports, constants, API boundaries |
 
----
+### Frontend Review Additions
 
-## Universal Review Checklist
-
-Self-check after writing or refactoring code:
-
-### Component & State
-- [ ] Props flow down, events flow up; child does not mirror parent state into local state.
-- [ ] Derived data computed on the fly rather than synchronized through effects or watchers.
-- [ ] Imperative handles (`ref`) expose behavioral actions (`focus()`, `reset()`), not raw state setters.
-- [ ] Shared state accessed via dedicated store/context; no prop drilling deeper than 3 layers.
-
-### Logic & Async
-- [ ] Business scoring, transformations, and complex orchestration extracted from UI components.
-- [ ] Side-effects cleanly tear down listeners, intervals, and cancel ongoing async requests via `AbortSignal`.
-- [ ] Async operations handle all states explicitly (loading, success, error) with no unhandled rejections.
-
-### Defensive Coding & Abstraction
-- [ ] No speculative one-line wrapper functions created without new domain meaning.
-- [ ] Standard JS collection methods (`map`, `filter`, `find`) used directly without artificial wrappers.
-- [ ] Untrusted inputs, query params, and status codes normalized once at boundary via lookup table.
-- [ ] Safe defaults use single-hop fallback (`value ?? default`), avoiding long guessing chains.
-
-### CSS & Conventions
-- [ ] Design tokens or CSS custom properties used instead of hardcoded magic values.
-- [ ] Third-party UI overrides strictly scoped under a feature container namespace.
-- [ ] API endpoints defined in a dedicated API module, not invoked inline inside view components.
-- [ ] Shared constants in `SCREAMING_SNAKE_CASE`; no magic strings or numbers.
-- [ ] Cross-domain imports use configured path aliases (e.g. `@/`), not deep relative traversals (`../../../`).
+- [ ] State ownership and derived values are explicit; components receive data and emit intent instead of synchronizing copies.
+- [ ] Effects clean up listeners and ongoing work; async outcomes have explicit owners and cannot overwrite newer state.
+- [ ] Styling, API boundaries, imports, and optimizations follow the applicable framework and project conventions without speculative machinery.
