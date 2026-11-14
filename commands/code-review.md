@@ -27,7 +27,7 @@ Priority from high to low:
 7. Performance: Does it create unnecessary computation, duplicate requests, expensive calculations, resource leaks, or degradation?
 8. Tests: Do key behaviors have tests or verification paths that prove the risks are covered?
 
-Style is only a finding when it affects consistency, readability, maintenance cost, or hides bugs; pure preference can only go in non-blocking suggestions.
+Style is only a finding when it affects consistency, readability, maintenance cost, or hides bugs. Assess readability through conceptual grouping, proximity of related functions, and linear reading order; cite concrete comprehension costs. Pure spacing or ordering preferences belong only in non-blocking suggestions.
 
 ---
 

@@ -17,6 +17,7 @@ Apply the general baseline to code in any language or runtime. Load frontend ext
 4. **Direct Code First**: Prefer existing code, standard libraries, platform features, and installed dependencies. Extract for domain meaning, cognitive simplicity, reuse, or responsibility boundaries, not line/caller counts or testability alone.
 5. **Capable Error Ownership**: Recover, add useful context, or report at the responsible boundary; otherwise propagate idiomatic errors/results/exceptions. Resource cleanup is mandatory.
 6. **Single Source of Truth**: Give data and policy clear owners; derive dependent values instead of synchronizing redundant copies. Do not impose frontend layers on other stacks.
+7. **Readability**: Separate conceptual groups with blank lines, keep related functions and private helpers nearby, and order code for linear reading with minimal jumping or scrolling. Respect language/runtime constraints and project conventions; avoid crowding and excessive fragmentation.
 
 ## General Review Checklist
 
